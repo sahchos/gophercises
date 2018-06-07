@@ -1,17 +1,17 @@
 package main
 
 import (
-	"flag"
-	"os"
-	"fmt"
-	"encoding/csv"
 	"bufio"
+	"encoding/csv"
+	"flag"
+	"fmt"
+	"os"
 	"time"
 )
 
 type CSVRow struct {
 	Question string
-	Answer string
+	Answer   string
 }
 
 var input string
@@ -22,14 +22,14 @@ func main() {
 	flag.Parse()
 
 	f, err := os.Open(*filePath)
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 	}
 	defer f.Close()
 
 	reader := csv.NewReader(bufio.NewReader(f))
 	records, err := reader.ReadAll()
-	if err != nil{
+	if err != nil {
 		fmt.Println(err.Error())
 	}
 
@@ -39,10 +39,10 @@ func main() {
 	fmt.Scanln(&input)
 
 	go func() {
-		for _, rec := range  records {
+		for _, rec := range records {
 			row := CSVRow{
 				Question: rec[0],
-				Answer: rec[1],
+				Answer:   rec[1],
 			}
 
 			fmt.Println(row.Question)

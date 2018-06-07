@@ -4,15 +4,14 @@ import (
 	"net/http"
 
 	"gopkg.in/yaml.v2"
-	"fmt"
 )
 
 type YAMLStruct []struct {
 	Path string `yaml:"path"`
-	URL string `yaml:"url"`
+	URL  string `yaml:"url"`
 }
 
-func BuildMap(pathToUrlArray YAMLStruct) map[string]string{
+func BuildMap(pathToUrlArray YAMLStruct) map[string]string {
 	pathMap := make(map[string]string)
 	for _, path := range pathToUrlArray {
 		pathMap[path.Path] = path.URL
@@ -55,10 +54,6 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	var YAMLData YAMLStruct
 	err := yaml.Unmarshal(yml, &YAMLData)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
 	pathsToUrls := BuildMap(YAMLData)
 	return MapHandler(pathsToUrls, fallback), err
 }
