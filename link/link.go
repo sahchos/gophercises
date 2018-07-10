@@ -12,8 +12,6 @@ type Link struct {
 	Href, Text string
 }
 
-var links []Link
-
 func getNodeText(n * html.Node) string {
 	text := ""
 	for inner := n.FirstChild; inner != nil; inner = inner.NextSibling {
@@ -32,7 +30,8 @@ func getNodeText(n * html.Node) string {
 	return strings.TrimSuffix(strings.TrimSpace(text), "\n")
 }
 
-func parseNode(n *html.Node) {
+func parseNode(n *html.Node) []Link {
+	var links []Link
 	if n.Type == html.ElementNode && n.Data == "a" {
 		for _, a := range n.Attr {
 			if a.Key == "href" {
@@ -44,12 +43,14 @@ func parseNode(n *html.Node) {
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		parseNode(c)
+		links = append(links, parseNode(c)...)
 	}
+
+	return links
 }
 
 func main() {
-	htmlFile, err := ioutil.ReadFile("link/ex4.html")
+	htmlFile, err := ioutil.ReadFile("link/ex2.html")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -59,7 +60,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	parseNode(doc)
+	links := parseNode(doc)
 
 	for _, link := range links {
 		fmt.Println("Link: ", link.Href)
